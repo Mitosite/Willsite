@@ -1,0 +1,53 @@
+from django.shortcuts import render, render_to_response
+from django.http import HttpResponse, HttpResponseRedirect
+from django.template import RequestContext
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.db import reset_queries
+
+from align.models import *
+from align.forms import *
+from align.static.align.pyscripts.mitositefuncs import *
+
+
+def index(request):
+	return render(request, 'align/choose.html')
+
+def single(request):
+	return render(request, 'align/single.html')
+
+def paired(request):
+	return render(request, 'align/paired.html')
+
+def choose(request):
+	return render(request, 'align/choose.html')
+
+def loading(request):
+	return render(request, 'align/loading.html')
+
+def upload_single(request):
+	return render(request, 'align/testredirect.html')
+
+def handle_uploaded_file(f):
+	UPLOADED_FILE = 'align/media/uploads/userupload1.fastq'
+	with open(UPLOADED_FILE, 'wb+') as destination:
+		for chunk in f.chunks():
+			destination.write(chunk)
+
+	# open upload file for reading
+	my_file = open(UPLOADED_FILE)
+
+def uploadtest(request):
+	upload_message = "Please upload reads in FASTQ format only."
+	if request.method == 'POST':
+		form = UploadFileForm(request.POST, request.FILES)
+		if form.is_valid():
+			randkey = keygen()
+			handle_uploaded_file(request.FILES['file'])
+			return render(request, 'align/simple_upload.html', {'upload_message': "Uploaded file successfully", 'random_key' : randkey})
+		else:
+			upload_message = "Not a valid form file"
+	else:
+		return render(request, 'align/simple_upload.html', {'upload_message': upload_message})
+#        form = UploadFileForm()
+#    return render(request, 'uploadtest', {'form': form, 'upload_message': upload_message})

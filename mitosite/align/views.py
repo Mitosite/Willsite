@@ -14,6 +14,9 @@ from align.static.align.pyscripts.mitositefuncs import *
 def index(request):
 	return render(request, 'align/choose.html')
 
+def single(request):
+	return render(request, 'align/single.html')
+
 def paired(request):
 	return render(request, 'align/paired.html')
 
@@ -22,9 +25,6 @@ def choose(request):
 
 def loading(request):
 	return render(request, 'align/loading.html')
-
-def upload_single(request):
-	return render(request, 'align/testredirect.html')
 
 def results(request):
 	return render(request, 'align/results.html')
@@ -42,7 +42,7 @@ def programmes(request):
 
 #Site processes
 
-def handle_uploaded_file(f):
+def handle_uploaded_single_file(f):
 	key = getkey()
 	dirpath = "/project/home17/whb17/public_html/django-framework/mitosite/align/media/uploads/" + key +"/"
 	os.mkdir(dirpath)
@@ -58,7 +58,7 @@ def handle_uploaded_file(f):
 def uploadtest(request):
 	upload_message = "Please upload reads in FASTQ format only."
 	if request.method == 'POST':
-		form = UploadFileForm(request.POST, request.FILES)
+		form = handle_uploaded_single_file(request.POST, request.FILES)
 		if form.is_valid():
 			handle_uploaded_file(request.FILES['file'])
 			print(key)
@@ -68,6 +68,20 @@ def uploadtest(request):
 	else:
 		form = UploadFileForm()
 		return render(request, 'align/simple_upload.html', {'upload_message': upload_message, 'form':form})
+
+def PairedJob(request):
+	upload_message = "Please upload reads in FASTQ format only."
+	if request.method == 'POST':
+		form = PairedJobForm(request.POST, request.FILES)
+		if form.is_valid():
+			handle_uploaded_file(request.FILES['file'])
+			print(key)
+			return render(request, 'align/loading.html', {'upload_message': "Uploaded file successfully", 'random_key': key })
+		else:
+			upload_message = "Not a valid file format"
+	else:
+		form = UploadFileForm()
+		return render(request, 'align/paired.html', {'upload_message': upload_message, 'form':form})
 
 	'''upload_message = "Waiting for files."
 	if request.method == 'POST':
@@ -91,18 +105,8 @@ def uploadtest(request):
 		'form': form
 	})'''
 
-def single(request):
-	upload_message = "Please upload reads in FASTQ format only. This is seperate from the test upload."
-	if request.method == 'POST':
-		form = SinglejobForm(request.POST, request.FILES)
-		if form.is_valid():
-			handle_uploaded_file(request.FILES['sreads_file'])
-			return render(request, 'align/single.html', {'upload_message': "Uploaded file successfully. This is seperate from the test upload.", 'random_key' : randkey})
-		else:
-			upload_message = "Not a valid file format"
-	else:
-		return render(request, 'align/single.html', {'upload_message': upload_message})
 
+	
 '''
 def RetrieveJob(request):
 

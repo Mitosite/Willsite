@@ -1,0 +1,22 @@
+from django.db import models
+
+class Single(models.Model):
+	uploadedfile = models.TextField()
+	randkey = models.TextField()
+	date = models.DateTimeField()
+
+	def __str__(self):
+		return self.label
+
+class Double(models.Model):
+	uploadedfile = models.TextField()
+	randkey = models.TextField()
+	date = models.DateTimeField()
+
+	def __str__(self):
+		return self.label
+
+class alnindex(models.Model):
+	Name = models.TextField()
+	compfile = models.FileField()
+	date = models.DateTimeField()

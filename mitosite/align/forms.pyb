@@ -1,0 +1,20 @@
+from django import forms
+from align.models import UploadFile
+
+
+'''class SingleForm(forms.Form):
+	readsfile = forms.Filefield(
+		label='Choose single end reads file'
+		)'''
+
+class UploadFileForm(forms.Form):
+	title = forms.CharField(max_length=50)
+	file = forms.FileField()
+
+	def check_fastq(self):
+					file = self.cleaned_data.get('file')
+					if not file:
+						raise forms.ValidationError('Please upload a valid file.')
+					if not file.name.endswith('.fastq'):
+						raise forms.ValidationError("Incorrect file format. Pease upload files ending in '.fasta'.")
+					return super(UploadFileForm, self).check_fastq()
