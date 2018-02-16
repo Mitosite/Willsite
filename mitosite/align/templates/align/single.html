@@ -1,0 +1,19 @@
+{% extends "align/header.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div id='singleupload'>
+	<div id='row'>
+		<div class="col-md-12">
+			<h2>Single-end reads upload</h2>
+			<center>{{ upload_message }}</center>
+    		<form method="POST" class="post-form" enctype="multipart/form data" action="{% url 'single' %}">
+    			{% csrf_token %}
+        		<center><input type="file" name="file"/></center>
+        		<!--<p>Trimming adapters:</p><input type="text"><br>-->
+        		<input type="submit" name="title" value="Upload"/>
+    		</form>
+		</div>
+	</div>	
+</div>
+{% endblock %}

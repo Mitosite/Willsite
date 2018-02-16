@@ -1,0 +1,54 @@
+{% extends "align/header.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+<div id="choice_page">
+	<div class='row'>
+		<div class="col-sm-12"><h2>Please choose a read type<br><br></h2></div>
+	</div>	
+
+	<div id="buttons" class="row">
+		<div class="col-sm-6">
+			<a href='{% url 'single' %}'>
+				<img src="{% static 'align/img/s_end_reads.png' %}" alt="Process single end reads" class="singlebutton"/>
+			</a>
+		</div>
+
+		<div class="col-sm-6" id="test">
+			<a href='{% url 'paired' %}'>
+				<img src="{% static 'align/img/d_end_reads_2.png' %}" alt="Process paired end reads" class="pairedbutton"/>
+			</a>
+		</div>
+	</div>
+
+	<div class='row' align='center'>
+		<div class="col-sm-12">
+			<br><br><br><p> If you are retrieving a job, please type or paste your code into this box:</p>
+		</div>
+	</div>
+
+	<div class='row' align='center'>
+		<div class="col-sm-12">
+			<form>
+				<input type="text">
+				<input type="submit" value="Retrieve job">
+			</form>
+		</div>
+	</div>
+
+		<div class='row' align='center'>
+		<div class="col-sm-12">
+
+		</div>
+	</div>
+
+	
+	<div class='row'>
+		<div class="col-sm-12" id="uploadtest">
+			<a href={% url 'uploadtest' %}><h1>Upload test</h1></a>
+		</div>
+	</div>	
+</div>
+
+{% endblock %}

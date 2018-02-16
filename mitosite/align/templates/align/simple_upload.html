@@ -1,0 +1,54 @@
+{% extends "align/header.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<table>
+  <tr>
+	<td  align="center"><h2>TEST UPLOAD 1</h2></td>
+  </tr>
+  <tr>
+	<td  align="center">{{ upload_message }}</td>
+	<td  align="center">{{ random_key }}</td>
+  </tr>
+
+  <tr>
+  	<td></td>
+  	<td>{{ dirpath }}</td>
+  </tr>
+  <tr align="left">
+	<td>
+		<form method="post" enctype="multipart/form-data" action="{% url 'uploadtest' %}">
+			{% csrf_token %}
+			
+			<center>{{ form.as_table }}</center>
+			<input type="file" name="file" />
+			<input type="submit" name="title" value="Upload"/>
+		</form>
+	</td>
+  </tr>
+</table>
+
+<!--<table>
+  <tr>
+	<td  align="center"><h2>TEST UPLOAD 2</h2></td>
+  </tr>
+  <tr>
+	<td  align="center">{{ upload_message }}</td>
+	<td  align="center">{{ random_key }}</td>
+  </tr>
+  <tr align="left">
+	<td>
+		<form method="post" enctype="multipart/form-data" action="{% url 'uploadtest' %}">
+			{% csrf_token %}
+			
+			<center><p>{{ form.as_p }}</p></center>
+			<button type="submit">Upload</button>
+		</form>
+	</td>
+  </tr>
+</table>-->
+
+
+{% endblock %}
