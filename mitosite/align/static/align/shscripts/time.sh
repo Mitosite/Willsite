@@ -1,0 +1,1 @@
+python /project/home17/whb17/public_html/django-framework/mitosite/align/static/align/pyscripts/printout.py
