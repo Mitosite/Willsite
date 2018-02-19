@@ -2,18 +2,48 @@
 {% load staticfiles %}
 
 {% block content %}
+
+
+<!--boostrap-friendly-->
 <div id='singleupload'>
 	<div id='row'>
 		<div class="col-md-12">
 			<h2>Single-end reads upload</h2>
 			<center>{{ upload_message }}</center>
-    		<form method="POST" class="post-form" enctype="multipart/form data" action="{% url 'single' %}">
+    		<form method="POST" class="post-form" enctype="multipart/form data">
     			{% csrf_token %}
-        		<center><input type="file" name="file"/></center>
+
+        		<!--<center>{{ form.readsfile }}</center>-->
         		<!--<p>Trimming adapters:</p><input type="text"><br>-->
         		<input type="submit" name="title" value="Upload"/>
     		</form>
 		</div>
 	</div>	
 </div>
+
+<!--OG HTML
+<table>
+  <tr>
+	<td  align="center"><h2>TEST UPLOAD 1</h2></td>
+  </tr>
+  <tr>
+	<td  align="center">{{ upload_message }}</td>
+	<td  align="center">{{ random_key }}</td>
+  </tr>
+
+  <tr>
+  	<td></td>
+  	<td>{{ dirpath }}</td>
+  </tr>
+  <tr align="left">
+	<td>
+		<form method="post" enctype="multipart/form-data" action="{% url 'uploadtest' %}">
+			{% csrf_token %}			
+			<center>{{ form.as_table }}</center>
+			<input type="submit" name="title" value="Upload"/>
+		</form>
+	</td>
+  </tr>
+</table>
+
 {% endblock %}

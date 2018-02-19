@@ -7,7 +7,14 @@ from django.db import reset_queries
 
 from align.models import *
 from align.forms import *
-from align.static.align.pyscripts.mitositefuncs import *
+import align.static.align.pyscripts.mitositefuncs as msf
+import align.static.align.pyscripts.emailstart as smail
+import os
+import sys
+import smtplib
+from email.mime.text import MIMEText as text
+
+
 
 #pages in choose app
 
@@ -29,21 +36,19 @@ def loading(request):
 def results(request):
 	return render(request, 'align/results.html')
 
-#Pages in programmes app
-
 def tutorial(request):
-	return render(request, 'programmes/tutorial.html')
+	return render(request, 'align/tutorial.html')
 
 def about(request):
-	return render(request, 'programmes/about.html')
+	return render(request, 'align/about.html')
 
 def programmes(request):
-	return render(request, 'programmes/programmes.html')
+	return render(request, 'align/programmes.html')
 
 #Site processes
 
 def handle_uploaded_single_file(f):
-	key = getkey()
+	key = msf.keygen()
 	dirpath = "/project/home17/whb17/public_html/django-framework/mitosite/align/media/uploads/" + key +"/"
 	os.mkdir(dirpath)
 	UPLOADED_FILE = dirpath + "userupload1.fastq"
@@ -55,12 +60,40 @@ def handle_uploaded_single_file(f):
 	# open upload file for reading
 	my_file = open(UPLOADED_FILE)
 
+key = msf.keygen()
+
+def handle_uploaded_paired_file(f):
+	
+	UploadFile().randkey = key
+	dirpath = "/project/home17/whb17/public_html/django-framework/mitosite/align/media/uploads/" + key +"/"
+	os.mkdir(dirpath)
+	UPLOADED_FILE_1 = dirpath + "userupload1.fastq"
+	UPLOADED_FILE_2 = dirpath + "userupload1.fastq"
+
+	with open(UPLOADED_FILE_1, 'wb+') as destination:
+		for chunk in f.chunks():
+			destination.write(chunk)
+
+	with open(UPLOADED_FILE_2, 'wb+') as destination:
+		for chunk in f.chunks():
+			destination.write(chunk)
+
+	# open upload file for reading
+	my_file_1 = open(UPLOADED_FILE_2)
+	my_file_2 = open(UPLOADED_FILE_2)
+	# Set off job start alert
+	user_email = form.cleaned_data['user_email']
+	smail.startalert(user_email, key)
+	return key
+
 def uploadtest(request):
 	upload_message = "Please upload reads in FASTQ format only."
 	if request.method == 'POST':
-		form = handle_uploaded_single_file(request.POST, request.FILES)
+		form = UploadFileForm(request.POST, request.FILES)
 		if form.is_valid():
-			handle_uploaded_file(request.FILES['file'])
+			handle_uploaded_single_file(request.FILES['file'])			
+			
+			#Transition to job start page displaying user key
 			print(key)
 			return render(request, 'align/loading.html', {'upload_message': "Uploaded file successfully", 'random_key': key })
 		else:
@@ -69,41 +102,36 @@ def uploadtest(request):
 		form = UploadFileForm()
 		return render(request, 'align/simple_upload.html', {'upload_message': upload_message, 'form':form})
 
-def PairedJob(request):
+def SingleJob(request):
 	upload_message = "Please upload reads in FASTQ format only."
 	if request.method == 'POST':
-		form = PairedJobForm(request.POST, request.FILES)
+		form = SingleJobForm(request.POST, request.FILES)
 		if form.is_valid():
-			handle_uploaded_file(request.FILES['file'])
+			handle_uploaded_single_file(request.FILES['readsfile'])
 			print(key)
 			return render(request, 'align/loading.html', {'upload_message': "Uploaded file successfully", 'random_key': key })
 		else:
 			upload_message = "Not a valid file format"
 	else:
-		form = UploadFileForm()
+		form = SingleJobForm()
+		return render(request, 'align/single.html', {'upload_message': upload_message, 'form':form})
+
+
+def PairedJob(request):
+	upload_message = "Please upload reads in FASTQ format only."
+	if request.method == 'POST':
+		form = PairedJobForm(request.POST, request.FILES)
+		if form.is_valid():
+			handle_uploaded_paired_file(request.FILES['readsfile1', 'readsfile2', 'adapters'])
+			print(key)
+			return render(request, 'align/loading.html', {'upload_message': "Uploaded file successfully", 'random_key': key })
+		else:
+			upload_message = "Not a valid file format"
+	else:
+		form = PairedJobForm()
 		return render(request, 'align/paired.html', {'upload_message': upload_message, 'form':form})
 
-	'''upload_message = "Waiting for files."
-	if request.method == 'POST':
-		form = UploadFileForm
-		if form.is_valid():
-			form.save()
-			return render(request, 'align/simple_upload.html', {'upload_message': "Uploaded file successfully", 'random_key' : randkey})
-	else:
-		form = UploadFileForm()
-	return render(request, 'align/simple_upload.html', {'upload_message': "Please upload valid file format."})'''
 
-'''def model_form_upload(request):
-	if request.method == 'POST':
-		form = DocumentForm(request.POST, request.FILES)
-		if form.is_valid():
-			form.save()
-			return redirect('align/simple_upload.html')
-	else:
-		form = DocumentForm()
-	return render(request, 'align/simple_upload.html', {
-		'form': form
-	})'''
 
 
 	

@@ -21,9 +21,9 @@
 	<td>
 		<form method="post" enctype="multipart/form-data" action="{% url 'uploadtest' %}">
 			{% csrf_token %}
-			
-			<center>{{ form.as_table }}</center>
-			<input type="file" name="file" />
+			<center><p>email</p>{{ form.user_email }}</center>
+			<!--<center><p>title</p>{{ form.title }}</center>-->
+			<center><p>file upload</p>{{ form.file }}</center>
 			<input type="submit" name="title" value="Upload"/>
 		</form>
 	</td>
