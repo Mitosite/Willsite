@@ -13,9 +13,10 @@
     		<form method="POST" class="post-form" enctype="multipart/form data">
     			{% csrf_token %}
 
-        		<!--<center>{{ form.readsfile }}</center>-->
-        		<!--<p>Trimming adapters:</p><input type="text"><br>-->
-        		<input type="submit" name="title" value="Upload"/>
+        		<center>{{ form.readsfile }}</center>
+        		<center>{{ form.user_email}}</center>
+
+        		<center><input type="submit" name="title" value="Upload"/></center>
     		</form>
 		</div>
 	</div>	
