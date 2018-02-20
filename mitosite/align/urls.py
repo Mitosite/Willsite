@@ -4,8 +4,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^single/', views.single, name='single'),
-    url(r'^paired/', views.paired, name='paired'),
+    url(r'^single/', views.SingleJob, name='single'),
+    url(r'^paired/', views.PairedJob, name='paired'),
     url(r'^$', views.choose, name='choose'),
     url(r'^uploadtest/', views.uploadtest, name='uploadtest'),
     url(r'^loading/', views.loading, name='loading'),

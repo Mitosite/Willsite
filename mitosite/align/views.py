@@ -9,6 +9,7 @@ from align.models import *
 from align.forms import *
 import align.static.align.pyscripts.mitositefuncs as msf
 import align.static.align.pyscripts.emailstart as smail
+from align.static.align.pyscripts.keytext2 import writetext
 import os
 import sys
 import smtplib
@@ -49,11 +50,12 @@ def programmes(request):
 
 key = msf.keygen() # generate key
 uploadpath = "/project/home17/whb17/public_html/django-framework/mitosite/align/media/uploads/" #upload path 
+dirpath = uploadpath + key +"/"
 
 def handle_uploaded_single_file(f):
-	key = msf.keygen()
-	dirpath = "/project/home17/whb17/public_html/django-framework/mitosite/align/media/uploads/" + key +"/"
-	os.mkdir(dirpath)
+	os.mkdir(dirpath) # defined outside of function
+	print(key) # defined outside of function
+	writetext(key, 'key.txt', dirpath)
 	UPLOADED_FILE = dirpath + "userupload1.fastq"
 
 	with open(UPLOADED_FILE, 'wb+') as destination:
@@ -67,10 +69,10 @@ def handle_uploaded_single_file(f):
 def handle_uploaded_paired_file(f):
 	
 	UploadFile().randkey = key
-	dirpath = uploadpath + key +"/"
-	os.mkdir(dirpath)
+	dirpath = uploadpath + key
+	os.chdir(dirpath) # ensure .txt file written into correct directory
 	UPLOADED_FILE_1 = dirpath + "userupload1.fastq"
-	UPLOADED_FILE_2 = dirpath + "userupload1.fastq"
+	UPLOADED_FILE_2 = dirpath + "userupload2.fastq"
 
 	with open(UPLOADED_FILE_1, 'wb+') as destination:
 		for chunk in f.chunks():
@@ -83,8 +85,6 @@ def handle_uploaded_paired_file(f):
 	# open upload file for reading
 	my_file_1 = open(UPLOADED_FILE_2)
 	my_file_2 = open(UPLOADED_FILE_2)
-	
-	return key
 
 
 def uploadtest(request):
@@ -96,10 +96,19 @@ def uploadtest(request):
 
 			# Set off job start alert
 			user_email = form.cleaned_data['user_email']
-			smail.startalert(user_email, key)
+			os.chdir(dirpath) # ensure .txt file written into correct directory
+			writetext(user_email, 'mailadrs.txt', dirpath) # writes .txt file containing email address to be used by job end alert email
+			smail.startalert(user_email, key) #sends email
+
+			#Initiate command line (for now just sends end of job alert)
+
+			os.chdir(dirpath)                   # set directory to given path to new directory
+			os.environ['KEYDIR'] = dirpath      # set environment variable to be new directory
+			os.system("echo $KEYDIR")			# echo path to command line
+			os.system("source /project/home17/whb17/public_html/django-framework/mitosite/align/static/align/shscripts/endalert.sh")	# run pipeline bash script. Full path given so accessable from any directory. Change later so not hard coded.	
 
 			#Transition to job start page displaying user key
-			print(key)
+			print(key)			
 			return render(request, 'align/loading.html', {'upload_message': "Uploaded file successfully", 'random_key': key })
 		else:
 			upload_message = "Not a valid file format"
@@ -128,7 +137,7 @@ def PairedJob(request):
 	if request.method == 'POST':
 		form = PairedJobForm(request.POST, request.FILES)
 		if form.is_valid():
-			handle_uploaded_paired_file(request.FILES['readsfile1', 'readsfile2', 'adapters'])
+			handle_uploaded_paired_file(request.FILES['readsfile1', 'readsfile2'])
 			print(key)
 			return render(request, 'align/loading.html', {'upload_message': "Uploaded file successfully", 'random_key': key })
 		else:

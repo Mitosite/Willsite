@@ -8,17 +8,18 @@ class UploadFileForm(forms.Form):
 	user_email = forms.EmailField(required=False)
 
 class SingleJobForm(forms.Form):
-	#form to submit single job
+	#form to submit jobs with one single end read file
 	readsfile = forms.FileField(label='Reads file:')
-	#adapters = forms.CharField(label='Adapter sequence:', max_length=50)
-	#key = forms.CharField(label='Random key:', max_length=10)
-	user_email = forms.EmailField(required=False)
+	adapters = forms.CharField(label='Adapter sequence:', max_length=50)
+	user_email = forms.EmailField(label='Email address (required to notify you when your job is complete): ', required=True)
 
 class PairedJobForm(forms.Form):
-	readsfile1 = forms.FileField(label='First reads file:')
-	readsfile2 = forms.FileField(label='Second reads file:')
-	adapters = forms.CharField(label='Adapter sequence:', max_length=50)
-	key = forms.CharField(label='Random key:', max_length=10)
+	#form to submit job using two paired ends files
+	readsfile1 = forms.FileField(label='First reads file')
+	readsfile2 = forms.FileField(label='Second reads file')
+	#adapters = forms.CharField(label='Adapter sequence:', max_length=50)
+	#user_email = forms.EmailField(label='Email address (required to notify you when your job is complete)', required=True)
+	
 
 
 '''
